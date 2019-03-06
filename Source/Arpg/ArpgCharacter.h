@@ -26,15 +26,16 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
+	void CheckForInteractables();
+
 protected:
 
 	
 	/** Function to collect every AutoPickup in range. */
 	void CollectAutoPickups();
-
 	
 	/** Function to check for the closest Interactable in sight and in range. */
-	void CheckForInteractables();
+	
 
 private:
 	/** Top down camera */

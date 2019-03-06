@@ -105,6 +105,8 @@ void AArpgCharacter::Tick(float DeltaSeconds)
 			CursorToWorld->SetWorldRotation(CursorR);
 		}
 	}
+
+	CollectAutoPickups();
 }
 
 
@@ -114,7 +116,7 @@ void AArpgCharacter::CollectAutoPickups()
 	TArray<AActor*> CollectedActors;
 	CollectionSphere->GetOverlappingActors(CollectedActors);
 
-	AArpgPlayerController* IController = Cast<AArpgPlayerController>(GetController());
+	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());
 
 	
 	// For each Actor we collected
@@ -125,7 +127,7 @@ void AArpgCharacter::CollectAutoPickups()
 		// If the cast is successful and the pickup is valid and active 
 		if (TestPickup && !TestPickup->IsPendingKill())
 		{
-			TestPickup->Collect(IController);
+			TestPickup->Collect(PC);
 		}
 	}
 }
@@ -133,6 +135,15 @@ void AArpgCharacter::CollectAutoPickups()
 
 void AArpgCharacter::CheckForInteractables()
 {
+	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());
+	if (PC)
+	{
+		PC->CurrentInteractable;
+		return;
+	}
+	PC->CurrentInteractable = nullptr;
+
+	/*
 	// Create a LineTrace to check for a hit
 	FHitResult HitResult;
 
@@ -143,9 +154,9 @@ void AArpgCharacter::CheckForInteractables()
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
-	AArpgPlayerController* IController = Cast<AArpgPlayerController>(GetController());
+	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());
 		
-	if (IController)
+	if (PC)
 	{
 		// Check if something is hit
 		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, QueryParams))
@@ -155,11 +166,12 @@ void AArpgCharacter::CheckForInteractables()
 			// If the cast is successful
 			if (Interactable)
 			{
-				IController->CurrentInteractable = Interactable;
+				PC->CurrentInteractable = Interactable;
 				return;
 			}
 		}
 
-		IController->CurrentInteractable = nullptr;
-	}
+		PC->CurrentInteractable = nullptr;
+	}*/
 }
+

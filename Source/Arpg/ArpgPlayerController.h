@@ -9,7 +9,7 @@
 #include "ArpgPlayerController.generated.h"
 
 UCLASS()
-class AArpgPlayerController : public APlayerController
+class ARPG_API AArpgPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
@@ -21,25 +21,25 @@ public:
 	void ReloadInventory();	
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		int32 GetInventoryWeight();
+	int32 GetInventoryWeight();
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
-		bool AddItemToInventoryByID(FName ID);
+	bool AddItemToInventoryByID(FName ID);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		class AInteractable* CurrentInteractable;
+	class AInteractable* CurrentInteractable;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		TArray<FInventoryItem> Inventory;
+	TArray<FInventoryItem> Inventory;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-		int32 Money;
+	int32 Money;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 InventorySlotLimit;
+	int32 InventorySlotLimit;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 InventoryWeightLimit;
+	int32 InventoryWeightLimit;
 	
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
