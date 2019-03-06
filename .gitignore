@@ -7,9 +7,6 @@ Unreal Generated Files
 */DerivedDataCache
 */Intermediate
 */Saved
-Arpg/Content/StarterContent/
-Arpg/Content/ParagonShinbi/
-Arpg/Content/
 
 #########
 VS Files
@@ -21,3 +18,9 @@ VS Files
 *.ipch
 Arpg/.vs/Arpg/v15/Solution.VC.db-shm
 Arpg/.vs/Arpg/v15/
+
+Content/ParagonShinbi/
+Content/StarterContent/
+Intermediate/
+Saved/
+Content/Mannequin/
