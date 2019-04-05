@@ -57,7 +57,7 @@ AArpgCharacter::AArpgCharacter()
 	// Create the collection sphere for inventory system
 	CollectionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("CollectionSphere"));
 	CollectionSphere->SetupAttachment(RootComponent);
-	CollectionSphere->SetSphereRadius(200.f);
+	CollectionSphere->SetSphereRadius(100.f);
 
 	// Create a camera boom...
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));

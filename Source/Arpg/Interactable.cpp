@@ -14,7 +14,7 @@ AInteractable::AInteractable()
 	Action = "Interact";
 
 	// Set collisionsphere for check if character is overalapping interactable
-	SphereRadius = 100.f;
+	SphereRadius = 80.f;
 	CollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	CollisionSphere->InitSphereRadius(SphereRadius);
 	CollisionSphere->SetCollisionProfileName("Trigger");
