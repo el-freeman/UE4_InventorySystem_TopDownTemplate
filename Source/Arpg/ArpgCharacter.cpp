@@ -6,6 +6,7 @@
 #include "Components/DecalComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -31,6 +32,7 @@ AArpgCharacter::AArpgCharacter()
 
 	// Make skeletal mesh face front side
 	GetMesh()->SetRelativeRotation(FRotator(0.f, 270.f, 0.f));
+	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -98.f));
 
 	// Attach animation blueprint
 	GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
@@ -61,8 +63,8 @@ AArpgCharacter::AArpgCharacter()
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->bAbsoluteRotation = true; // Don't want arm to rotate when character does
-	CameraBoom->TargetArmLength = 2000.f;
-	CameraBoom->RelativeRotation = FRotator(-60.f, 0.f, 0.f);
+	CameraBoom->TargetArmLength = 1800.f;
+	CameraBoom->RelativeRotation = FRotator(-55.f, 0.f, 0.f);
 	CameraBoom->bDoCollisionTest = false; // Don't want to pull camera in when it collides with level
 
 	// Create a camera...
@@ -81,6 +83,19 @@ AArpgCharacter::AArpgCharacter()
 	}
 	CursorToWorld->DecalSize = FVector(16.0f, 32.0f, 32.0f);
 	CursorToWorld->SetRelativeRotation(FRotator(90.0f, 0.0f, 0.0f).Quaternion());
+
+	// Create HPBar UI
+	// UILocation needs to be modified when screen size or FOV changed
+	HPBarWidget = CreateDefaultSubobject <UWidgetComponent>(TEXT("HPBARWIDGET"));
+	HPBarWidget->SetupAttachment(GetMesh());
+	HPBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 270.f));
+	HPBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+	static ConstructorHelpers::FClassFinder<UUserWidget> UI_HUD(TEXT("WidgetBlueprint'/Game/UI/UI_HPBar.UI_HPBar_C'"));
+	if (UI_HUD.Succeeded())
+	{
+		HPBarWidget->SetWidgetClass(UI_HUD.Class);
+		HPBarWidget->SetDrawSize(FVector2D(100.f, 30.f));
+	}
 
 	// Activate ticking in order to update the cursor every frame.
 	PrimaryActorTick.bCanEverTick = true;
@@ -106,7 +121,11 @@ void AArpgCharacter::Tick(float DeltaSeconds)
 		}
 	}
 
-	CollectAutoPickups();
+	// Find items for manual picup
+	CheckForInteractables();
+
+	// Find items can be colledted automatically
+	CollectAutoPickups();	
 }
 
 
@@ -116,62 +135,42 @@ void AArpgCharacter::CollectAutoPickups()
 	TArray<AActor*> CollectedActors;
 	CollectionSphere->GetOverlappingActors(CollectedActors);
 
-	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());
+	AArpgPlayerController* IController = Cast<AArpgPlayerController>(GetController());
 
 	
-	// For each Actor we collected
-	for (int32 iCollected = 0; iCollected < CollectedActors.Num(); ++iCollected)
+	// For each Actor we collected	
+	for(AActor* Pickup : CollectedActors)
 	{
 		// Cast the actor to AAutoPickup
-		AAutoPickup* const TestPickup = Cast<AAutoPickup>(CollectedActors[iCollected]);
+		AAutoPickup* const TestPickup = Cast<AAutoPickup>(Pickup);
 		// If the cast is successful and the pickup is valid and active 
 		if (TestPickup && !TestPickup->IsPendingKill())
 		{
-			TestPickup->Collect(PC);
+			TestPickup->Collect(IController);
 		}
 	}
 }
 
 
 void AArpgCharacter::CheckForInteractables()
-{
-	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());
+{	
+	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());	
 	if (PC)
-	{
-		PC->CurrentInteractable;
-		return;
-	}
-	PC->CurrentInteractable = nullptr;
+	{		
+		FHitResult HitResult;
+		PC->GetHitResultUnderCursor(ECC_Visibility, true, HitResult);
+		AInteractable* Interactable = Cast<AInteractable>(HitResult.GetActor());
 
-	/*
-	// Create a LineTrace to check for a hit
-	FHitResult HitResult;
-
-	int32 Range = 500;
-	FVector StartTrace = TopDownCameraComponent->GetComponentLocation();
-	FVector EndTrace = (TopDownCameraComponent->GetForwardVector() * Range) + StartTrace;
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-
-	AArpgPlayerController* PC = Cast<AArpgPlayerController>(GetController());
+		float const Distance = FVector::Dist(HitResult.ImpactPoint, this->GetActorLocation());
 		
-	if (PC)
-	{
-		// Check if something is hit
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, StartTrace, EndTrace, ECC_Visibility, QueryParams))
-		{
-			// Cast the actor to AInteractable
-			AInteractable* Interactable = Cast<AInteractable>(HitResult.GetActor());
-			// If the cast is successful
-			if (Interactable)
-			{
-				PC->CurrentInteractable = Interactable;
-				return;
-			}
-		}
-
-		PC->CurrentInteractable = nullptr;
-	}*/
+		// Check mouse cursor is on the item && Distance between item and character is close enough
+		if (Interactable && (Distance < 350.0f))
+		{			
+			
+			PC->CurrentInteractable = Interactable;
+			UE_LOG(LogTemp, Warning, (TEXT("Active CurrentInteracable")));
+			return;						
+		}		
+	}
+	PC->CurrentInteractable = nullptr;	
 }
-

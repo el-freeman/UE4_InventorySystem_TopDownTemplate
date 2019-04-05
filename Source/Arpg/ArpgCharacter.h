@@ -26,15 +26,17 @@ public:
 	/** Returns CursorToWorld subobject **/
 	FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorToWorld; }
 
+	/** Function to check for the closest Interactable in sight and in range. */
 	void CheckForInteractables();
 
-protected:
+	UPROPERTY(VisibleAnywhere, Category = UI)
+	class UWidgetComponent* HPBarWidget;
 
+protected:
 	
 	/** Function to collect every AutoPickup in range. */
 	void CollectAutoPickups();
 	
-	/** Function to check for the closest Interactable in sight and in range. */
 	
 
 private:
@@ -49,7 +51,6 @@ private:
 	/** A decal that projects to the cursor location. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UDecalComponent* CursorToWorld;
-
 	
 	/** Collection sphere */	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

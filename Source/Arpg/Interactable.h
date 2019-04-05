@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Components/PrimitiveComponent.h"
-#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Interactable.generated.h"
 
 UCLASS()
@@ -17,29 +17,59 @@ public:
 	// Sets default values for this actor's properties
 	AInteractable();
 
+protected:
+	virtual void BeginPlay() override;
+
+
+public:
+	virtual void Tick(float Deltaseconds) override;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void Interact(APlayerController* Controller);
 
+	// For children class including AutoPicup and ManualPickup
 	virtual void Interact_Implementation(APlayerController* Controller);
 
 	UPROPERTY(EditDefaultsOnly)
 	FString Name;
-
 	UPROPERTY(EditDefaultsOnly)
 	FString Action;
 
+	// For widget to get item name when mouse cursor is over the item 
 	UFUNCTION(BlueprintCallable, Category = "Pickup")
-	FString GetInteractText() const;
+	FString GetItemName() const;
+	
+	UPROPERTY(VisibleAnywhere)
+	USphereComponent* CollisionSphere;
 
-	UPROPERTY(VisibleAnywhere, Category = Box)
-	UBoxComponent* Trigger;
+	UPROPERTY(VisibleAnywhere)
+	UStaticMeshComponent* InteractableMesh;
+
+	UPROPERTY(EditAnywhere)
+	float SphereRadius;	
+	
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	bool GetIsOnOverlaped() { return bOnActorOver; }
+
+	UFUNCTION()
+	void OnBeginMouseOver(UPrimitiveComponent* TouchedComponent);
+
+	UFUNCTION()
+	void OnEndMouseOver(UPrimitiveComponent* TouchedComponent);
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void PostInitializeComponents() override;
 
-private:
-	UFUNCTION()
-	void OnCharacterOverlap(UPrimitiveComponent* OverlapComp, AActor* OtherActor, UPrimitiveComponent* OhterComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ItemID;
+
+	bool bOnActorOver;
+	bool bOnMouseOver;
+
+
 };

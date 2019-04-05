@@ -16,7 +16,7 @@ class ARPG_API AArpgPlayerController : public APlayerController
 public:
 	AArpgPlayerController();
 
-	//functions and variables for inventor system
+	//functions and variables for inventory system
 	UFUNCTION(BlueprintImplementableEvent)
 	void ReloadInventory();	
 
@@ -25,7 +25,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Utils")
 	bool AddItemToInventoryByID(FName ID);
-
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	class AInteractable* CurrentInteractable;
 
@@ -40,7 +40,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 InventoryWeightLimit;
-	
+		
 protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;

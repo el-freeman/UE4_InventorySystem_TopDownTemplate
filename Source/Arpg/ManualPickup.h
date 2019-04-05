@@ -20,11 +20,4 @@ public:
 
 	void Interact_Implementation(APlayerController* Controller) override;
 
-protected:
-	UPROPERTY(EditAnywhere)
-		UStaticMeshComponent* PickupMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		FName ItemID;	
-	
 };

@@ -5,13 +5,7 @@
 
 
 // Sets default values
-AAutoPickup::AAutoPickup()
-{
-	PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>("PickupMesh");
-	RootComponent = Cast<USceneComponent>(PickupMesh);
-
-	ItemID = FName("No ID");
-}
+AAutoPickup::AAutoPickup(){}
 
 void AAutoPickup::Collect_Implementation(APlayerController* Controller)
 {

@@ -4,12 +4,15 @@
 #include "AI/Navigation/NavigationSystem.h"
 #include "Runtime/Engine/Classes/Components/DecalComponent.h"
 #include "ArpgCharacter.h"
+#include "ArpgGameInstance.h"
+#include "Blueprint/UserWidget.h"
 #include "ArpgGameState.h"
 #include "Engine/World.h"
 
 AArpgPlayerController::AArpgPlayerController()
 {
 	bShowMouseCursor = true;
+	bEnableMouseOverEvents = true;
 	DefaultMouseCursor = EMouseCursor::Crosshairs;
 
 	InventorySlotLimit = 50;
@@ -47,10 +50,11 @@ bool AArpgPlayerController::AddItemToInventoryByID(FName ID)
 	return false;
 }
 
+
 void AArpgPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
-
+	
 	// keep updating the destination every tick while desired
 	if (bMoveToMouseCursor)
 	{
@@ -112,8 +116,10 @@ void AArpgPlayerController::OnSetDestinationReleased()
 	bMoveToMouseCursor = false;
 }
 
+
 void AArpgPlayerController::Interact()
 {
+	// When AArpgCharacter::CheckForInteractables() is excuted
 	if (CurrentInteractable)
 	{
 		CurrentInteractable->Interact(this);

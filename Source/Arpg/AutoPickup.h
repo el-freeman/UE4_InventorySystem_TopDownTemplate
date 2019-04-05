@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Interactable.h"
 #include "AutoPickup.generated.h"
 
 UCLASS()
-class ARPG_API AAutoPickup : public AActor
+class ARPG_API AAutoPickup : public AInteractable
 {
 	GENERATED_BODY()
 	
@@ -20,11 +20,4 @@ public:
 	virtual void Collect_Implementation(APlayerController* Controller);
 
 	FName GetItemID();
-
-protected:
-	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent* PickupMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName ItemID;	
 };
